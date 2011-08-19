@@ -12,7 +12,7 @@ import com.jcraft.jsch.*;
  *
  */
 public class Ssh {
-	public void Sshexec(String host, String user, String password, String command){
+	public void Sshexec(String host, String user, String password, String command, String port, Boolean trust){
 		try{
 		JSch jsch=new JSch();  
 		 

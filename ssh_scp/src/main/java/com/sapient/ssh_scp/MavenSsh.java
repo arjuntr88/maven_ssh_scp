@@ -84,7 +84,7 @@ public class MavenSsh
 		if(verifyInput())
 		{
 		Ssh ssh=new Ssh();
-		ssh.Sshexec(host,user,password,command);
+		ssh.Sshexec(host,user,password,command,port,trust);
 		}
 	
 	}
