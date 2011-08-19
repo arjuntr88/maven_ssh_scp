@@ -26,6 +26,13 @@
       <threadSafe>false</threadSafe>
       <parameters>
         <parameter>
+          <name>command</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The file to copy.</description>
+        </parameter>
+        <parameter>
           <name>file</name>
           <type>java.lang.String</type>
           <required>false</required>

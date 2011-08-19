@@ -33,7 +33,7 @@ import java.io.IOException;
  */
 
 
-public class MavenSshScp
+public class MavenSsh
     extends AbstractMojo
 {
 	/**
@@ -60,13 +60,31 @@ public class MavenSshScp
 	 * @parameter password="password" default-value=""
 	 */
 	private String password;
+	/**
+	 * The file to copy.
+	 *
+	 * @parameter command="command" default-value=""
+	 */
+	private String command;
+	/**
+	 * The file to copy.
+	 *
+	 * @parameter trust="true/false" default-value=""
+	 */
+	private Boolean trust;
+	/**
+	 * The file to copy.
+	 *
+	 * @parameter port="port" default-value=""
+	 */
+	private String port;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		// TODO Auto-generated method stub
 		if(verifyInput())
 		{
 		Ssh ssh=new Ssh();
-		ssh.Sshexec();
+		ssh.Sshexec(host,user,password,command);
 		}
 	
 	}
@@ -133,19 +151,23 @@ public class MavenSshScp
 		}
 		if(user.isEmpty())
 		{
-			getLog().info("Please set a host");
+			getLog().info("Please set a user");
 			
 		}
 		if(password.isEmpty())
 		{
-			getLog().info("Please set a host");
+			getLog().info("Please set a password");
 			
+		}
+		if(command.isEmpty())
+		{
+			getLog().info("Please set a command");
 		}
 	}
 	
 	catch (Exception e) {
 		// TODO: handle exception
-		//getLog().info(e.toString());
+		getLog().info(e.toString());
 		return false;
 	}
 	return true;
