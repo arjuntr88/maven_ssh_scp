@@ -20,126 +20,92 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which runs a command on a server.
  *
- * @goal touch
+ * @goal ssh
  * 
- * @phase process-sources
+ * 
  */
 
 
-public class MavenSsh
+public class MavenSSH
     extends AbstractMojo
 {
 	/**
-	 * The file to copy.
-	 *
-	 * @parameter file="file" default-value=""
-	 */
-	private String file;
-	/**
-	 * The file to copy.
+	 * The host to run cmd in.
 	 *
 	 * @parameter host="host" default-value=""
 	 */
 	private String host;
 	/**
-	 * The file to copy.
+	 * The user to run cmd as.
 	 *
 	 * @parameter user="user" default-value=""
 	 */
 	private String user;
 	/**
-	 * The file to copy.
+	 * The password.
 	 *
 	 * @parameter password="password" default-value=""
 	 */
 	private String password;
 	/**
-	 * The file to copy.
+	 * The cmd to run.
 	 *
 	 * @parameter command="command" default-value=""
 	 */
 	private String command;
 	/**
-	 * The file to copy.
+	 * Trust the remote.
 	 *
-	 * @parameter trust="true/false" default-value=""
+	 * @parameter trust="true/false" default-value="false"
 	 */
 	private Boolean trust;
 	/**
-	 * The file to copy.
+	 * The port to connect.
 	 *
-	 * @parameter port="port" default-value=""
+	 * @parameter port="port" default-value="22"
 	 */
-	private String port;
+	private Integer port;
+	/**
+	 * The timeout for connection.
+	 *
+	 * @parameter timeout=timeout default-value="0"
+	 */
+	private Integer timeout;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		// TODO Auto-generated method stub
 		if(verifyInput())
 		{
-		Ssh ssh=new Ssh();
-		ssh.Sshexec(host,user,password,command,port,trust);
+		SshExec ssh=new SshExec();
+		ssh.Sshexec(host,user,password,command,port,trust,timeout);
 		}
 	
 	}
     /**
-     * Location of the file.
-     * @return 
-     * @parameter expression="${project.build.directory}"
-     * @required
+     * 
+     * 
+     * @throws MojoExecutionException 
+     * 
+     * 
      */
-   /* private File outputDirectory;
-
-    public void execute()
-        throws MojoExecutionException
-    {
-        File f = outputDirectory;
-
-        if ( !f.exists() )
-        {
-            f.mkdirs();
-        }
-
-        File touch = new File( f, "touch.txt" );
-
-        FileWriter w = null;
-        try
-        {
-            w = new FileWriter( touch );
-
-            w.write( "touch.txt" );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating file " + touch, e );
-        }
-        finally
-        {
-            if ( w != null )
-            {
-                try
-                {
-                    w.close();
-                }
-                catch ( IOException e )
-                {
-                    // ignore
-                }
-            }
-        }
-    }*/
-
-	private boolean verifyInput() {
+   
+	private boolean verifyInput() throws MojoExecutionException {
 		// TODO Auto-generated method stub
-		try
-		{
-		if(file.isEmpty())
+		
+			checkFeild(host,"host");
+				
+			checkFeild(user,"user");
+				
+			checkFeild(password,"password");
+				
+			checkFeild(command,"command");
+				
+		/*if(file.isEmpty())
 		{		
 		getLog().info("Please set a file");	
 		return false;
@@ -162,14 +128,26 @@ public class MavenSsh
 		if(command.isEmpty())
 		{
 			getLog().info("Please set a command");
-		}
-	}
+		}*/
 	
-	catch (Exception e) {
-		// TODO: handle exception
-		getLog().info(e.toString());
-		return false;
-	}
+	
 	return true;
+	}
+	private void checkFeild(String feild, String feildName) throws MojoExecutionException {
+		// TODO Auto-generated method stub
+		try
+		{
+			if(feild.isEmpty())
+			{
+				getLog().info("SSH: Please enter a value for "+ feildName);
+				
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			getLog().info("SSH: Please enter a value for "+ feildName);
+			throw new MojoExecutionException("SSH: Please enter a value for "+ feildName);
+		}
+	
 	}
 }

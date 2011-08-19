@@ -11,8 +11,8 @@ import com.jcraft.jsch.*;
  * @author arames
  *
  */
-public class Ssh {
-	public void Sshexec(String host, String user, String password, String command, String port, Boolean trust){
+public class SshExec {
+	public void Sshexec(String host, String user, String password, String command, Integer port, Boolean trust, Integer timeout){
 		try{
 		JSch jsch=new JSch();  
 		 
@@ -27,12 +27,31 @@ public class Ssh {
 	      }*/
 	      //String user="root";
 	     // host="10.209.6.22";
-	      java.util.Properties config = new java.util.Properties(); 
-	      config.put("StrictHostKeyChecking", "no");
+	      java.util.Properties config = new java.util.Properties();
+	      if(trust==true)
+	      {
+	    	  config.put("StrictHostKeyChecking", "no");
+	      }
 	      
-	      Session session=jsch.getSession(user, host, 22);
+	      Session session;
+	   
+	      if(port!=22){
+	    	  session=jsch.getSession(user, host, port);
+	      }
+	      else{
+	    	  session=jsch.getSession(user, host, 22);  
+	      }
+	      if(timeout!=0){
+	    	  session.setTimeout(timeout);
+	      }
+	      try{
 	      session.setConfig(config);
 	      session.setPassword(password);
+	      }
+	      catch (Exception e) {
+			// TODO: handle exception
+	    	 
+		}
 	      /*
 	      String xhost="127.0.0.1";
 	      int xport=0;

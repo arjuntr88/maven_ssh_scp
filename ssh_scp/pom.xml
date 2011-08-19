@@ -4,7 +4,7 @@
   <groupId>com.sapient</groupId>
   <artifactId>maven-ssh</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>maven-ssh Maven Mojo</name>
   <url>http://maven.apache.org</url>
   <dependencies>
@@ -29,4 +29,21 @@
     	<scope>compile</scope>
     </dependency>
   </dependencies>
+  
+  <build>
+  <plugins>
+
+  	<plugin>
+  		<groupId>org.apache.maven.plugins</groupId>
+  		<artifactId>maven-jar-plugin</artifactId>
+  		<version>2.3.1</version>
+  		<configuration>
+		<archive>
+			<addMavenDescriptor>false</addMavenDescriptor>
+		</archive>
+	    </configuration>
+  	</plugin>
+  </plugins>
+  
+  </build>
 </project>

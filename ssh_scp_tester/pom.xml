@@ -18,20 +18,20 @@
     <plugins>
       <plugin>
         <groupId>com.sapient</groupId>
-        <artifactId>ssh_scp</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>maven-ssh</artifactId>
+        <version>1.0-SNAPSHOT</version>
         <configuration>
-        <file>abcd.java</file>
         <user>root</user>
         <host>10.209.6.22</host>
         <password>root123</password>
-        <command>df -h</command>
-    	</configuration>
+        <command>netstat</command>
+        <trust>true</trust>
+        </configuration>
  		 <executions>
           <execution>
-            <phase>compile</phase>
+            <phase>deploy</phase>
             <goals>
-              <goal>touch</goal>
+              <goal>ssh</goal>
             </goals>
           </execution>
         </executions>
@@ -50,9 +50,9 @@
     						<pluginExecution>
     							<pluginExecutionFilter>
     								<groupId>com.sapient</groupId>
-    								<artifactId>ssh_scp</artifactId>
+    								<artifactId>maven-ssh</artifactId>
     								<versionRange>
-    									[0.0.1-SNAPSHOT,)
+    									[1.0-SNAPSHOT,)
     								</versionRange>
     								<goals>
     									<goal>touch</goal>
