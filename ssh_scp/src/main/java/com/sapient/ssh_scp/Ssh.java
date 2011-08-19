@@ -12,11 +12,11 @@ import com.jcraft.jsch.*;
  *
  */
 public class Ssh {
-	public void Sshexec(){
+	public void Sshexec(String host, String user, String password, String command, String port, Boolean trust){
 		try{
 		JSch jsch=new JSch();  
 		 
-	      String host=null;
+	      //host=null;
 	     /* if(arg.length>0){
 	        host=arg[0];
 	      }
@@ -25,13 +25,14 @@ public class Ssh {
 	                                         System.getProperty("user.name")+
 	                                         "@localhost"); 
 	      }*/
-	      String user="root";
-	      host="10.209.6.22";
-	      java.util.Properties config = new java.util.Properties(); config.put("StrictHostKeyChecking", "no");
+	      //String user="root";
+	     // host="10.209.6.22";
+	      java.util.Properties config = new java.util.Properties(); 
+	      config.put("StrictHostKeyChecking", "no");
 	      
 	      Session session=jsch.getSession(user, host, 22);
 	      session.setConfig(config);
-	      session.setPassword("root123");
+	      session.setPassword(password);
 	      /*
 	      String xhost="127.0.0.1";
 	      int xport=0;
@@ -50,7 +51,7 @@ public class Ssh {
 
 	      //String command=JOptionPane.showInputDialog("Enter command", 
 	                                                 //"set|grep SSH");
-	      String command="whoami";
+	      //String command="whoami";
 	      Channel channel=session.openChannel("exec");
 	      ((ChannelExec)channel).setCommand(command);
 
@@ -78,7 +79,12 @@ public class Ssh {
 	          System.out.print(new String(tmp, 0, i));
 	        }
 	        if(channel.isClosed()){
-	          //System.out.println("exit-status: "+channel.getExitStatus());
+	          if(channel.getExitStatus()>0){
+	        	  System.out.println("exit-status: "+channel.getExitStatus());
+	        	  System.exit(channel.getExitStatus());
+	          }
+	        	
+	          
 	          break;
 	        }
 	        try{Thread.sleep(1000);}catch(Exception ee){}
