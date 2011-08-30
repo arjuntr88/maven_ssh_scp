@@ -16,6 +16,7 @@ package com.maven.ssh;
  * limitations under the License.
  */
 
+import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -67,6 +68,13 @@ public class MavenSSH
 	 */
 	private String keyFile;
 	/**
+	 * The passphrase.
+	 *
+	 * @parameter passphrase="" default-value=""
+	 * 
+	 */
+	private String passPhrase;
+	/**
 	 * The cmd to run.
 	 *
 	 * @parameter command="command" default-value=""
@@ -106,11 +114,24 @@ public class MavenSSH
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		// TODO Auto-generated method stub
-		if(verifyPassword())
-		{
 		SetSSHExecParameters ssh=new SetSSHExecParameters();
+		verifyPassword();
+		
 		try{
-			ssh.Sshexec(host,user,password,command,port,trust,timeout,knownHosts,failonError);	
+		if(checkKeyFile()){
+		File file=new File(keyFile);
+		if(file.exists()){
+			ssh.Sshexec(host,user,keyFile,command,port,trust,timeout,knownHosts,failonError,passPhrase,true);
+			getLog().info("meth 1");
+		}
+		}
+		else if(checkPassword()){
+			ssh.Sshexec(host,user,password,command,port,trust,timeout,knownHosts,failonError);
+			getLog().info("meth 2");
+		}
+		
+		
+				
 		}
 		catch (ExecutionException e){
 			//System.out.println(e.getCause().getMessage());
@@ -120,7 +141,7 @@ public class MavenSSH
 			// TODO: handle exception
 			throw new MojoExecutionException("There was a problem connecting to the server");
 		}
-		}
+		
 	
 	}
     /**
@@ -131,27 +152,43 @@ public class MavenSSH
      * 
      */
    
-	private boolean verifyPassword() throws MojoExecutionException {
+	private void verifyPassword() throws MojoExecutionException {
 		// TODO Auto-generated method stub
 		
 			if(!checkPassword()){
 				if(!checkKeyFile()){
-					return false;
+					throw new MojoExecutionException("Please provide a password or a keyfile");
 				}
 			}
-				return true;
+			if(checkPassword()){
+				if(checkKeyFile()){
+					throw new MojoExecutionException("Please provide either a password or keyfile not both");
+				}
+			}
 			
 	}
 	private boolean checkKeyFile() {
 		// TODO Auto-generated method stub
+		try{
+			
+		
 		if(keyFile.isEmpty()){
+			return false;
+		}
+		}
+		catch(Exception e){
 			return false;
 		}
 		return true;
 	}
 	private Boolean checkPassword() throws MojoExecutionException {
 		// TODO Auto-generated method stub
+		try {
 		if(password.isEmpty()){
+			return false;
+		}
+		}
+		catch(Exception e){
 			return false;
 		}
 		return true;

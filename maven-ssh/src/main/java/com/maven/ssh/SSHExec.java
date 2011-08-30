@@ -17,7 +17,20 @@ public class SSHExec {
 	Session session;
 	String knownHosts;
 	Boolean failonError;
-	
+	String keyFile;
+	String passPhrase;
+	public String getKeyFile() {
+		return keyFile;
+	}
+	public void setKeyFile(String keyFile) {
+		this.keyFile = keyFile;
+	}
+	public String getPassPhrase() {
+		return passPhrase;
+	}
+	public void setPassPhrase(String passPhrase) {
+		this.passPhrase = passPhrase;
+	}
 	public Boolean getFailonError() {
 		return failonError;
 	}
@@ -40,6 +53,8 @@ public class SSHExec {
 		timeout=0;
 		knownHosts=System.getProperty("user.home")+".ssh/known_hosts";
 		failonError=false;
+		keyFile="";
+		passPhrase="";
 	}
 	public String getHost() {
 		return host;
@@ -92,7 +107,11 @@ public class SSHExec {
 	      {
 	    	  config.put("StrictHostKeyChecking", "no");
 	      }
-	      
+	      if(keyFile!=""){
+	    	    jsch.addIdentity(keyFile, passPhrase);
+	    	  
+	    	  
+	      }
 	      
 	   
 	      if(port!=22){
@@ -106,7 +125,11 @@ public class SSHExec {
 	      }
 	      try{
 	      session.setConfig(config);
-	      session.setPassword(password);
+	      if(passPhrase!=""){
+	         session.setPassword(password);
+	         
+	      }
+	      
 	      }
 	      catch (Exception e) {
 			// TODO: handle exception

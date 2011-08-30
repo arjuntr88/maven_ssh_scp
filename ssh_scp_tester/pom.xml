@@ -26,6 +26,8 @@
         <password>root123</password>
         <command>netstat</command>
         <trust>true</trust>
+        <port>22</port>
+        <failonError>false</failonError>
         </configuration>
  		 <executions>
           <execution>
