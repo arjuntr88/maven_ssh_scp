@@ -11,8 +11,16 @@ import com.jcraft.jsch.*;
  * @author arames
  *
  */
-public class SshExec {
-	public void Sshexec(String host, String user, String password, String command, Integer port, Boolean trust, Integer timeout){
+public class SetSSHExecParameters {
+	public void Sshexec(String host, String user, String password, String command, Integer port, Boolean trust, Integer timeout) throws JSchException{
+		SSHExec ssh= new SSHExec();
+		ssh.setCommand(host);
+		ssh.setUser(user);
+		ssh.setPassword(password);
+		ssh.setCommand(command);
+		
+		
+		
 		try{
 		JSch jsch=new JSch();  
 		 
@@ -113,6 +121,8 @@ public class SshExec {
 	    }
 	    catch(Exception e){
 	      System.out.println(e);
+	      e.printStackTrace();
+	      throw new JSchException();
 	    }
 	}
 

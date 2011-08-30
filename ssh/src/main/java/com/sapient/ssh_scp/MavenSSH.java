@@ -22,6 +22,8 @@ import org.apache.maven.plugin.MojoFailureException;
 
 
 
+
+
 /**
  * Goal which runs a command on a server.
  *
@@ -38,24 +40,28 @@ public class MavenSSH
 	 * The host to run cmd in.
 	 *
 	 * @parameter host="host" default-value=""
+	 * @required
 	 */
 	private String host;
 	/**
 	 * The user to run cmd as.
 	 *
 	 * @parameter user="user" default-value=""
+	 * @required
 	 */
 	private String user;
 	/**
 	 * The password.
 	 *
 	 * @parameter password="password" default-value=""
+	 * 
 	 */
 	private String password;
 	/**
 	 * The cmd to run.
 	 *
 	 * @parameter command="command" default-value=""
+	 * @required
 	 */
 	private String command;
 	/**
@@ -81,8 +87,14 @@ public class MavenSSH
 		// TODO Auto-generated method stub
 		if(verifyInput())
 		{
-		SshExec ssh=new SshExec();
-		ssh.Sshexec(host,user,password,command,port,trust,timeout);
+		SetSSHExecParameters ssh=new SetSSHExecParameters();
+		try{
+			ssh.Sshexec(host,user,password,command,port,trust,timeout);	
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			throw new MojoExecutionException("There was a problem connecting to the server");
+		}
 		}
 	
 	}
@@ -104,34 +116,7 @@ public class MavenSSH
 			checkFeild(password,"password");
 				
 			checkFeild(command,"command");
-				
-		/*if(file.isEmpty())
-		{		
-		getLog().info("Please set a file");	
-		return false;
-		}
-		if(host.isEmpty())
-		{
-			getLog().info("Please set a host");
-			
-		}
-		if(user.isEmpty())
-		{
-			getLog().info("Please set a user");
-			
-		}
-		if(password.isEmpty())
-		{
-			getLog().info("Please set a password");
-			
-		}
-		if(command.isEmpty())
-		{
-			getLog().info("Please set a command");
-		}*/
-	
-	
-	return true;
+			return true;
 	}
 	private void checkFeild(String feild, String feildName) throws MojoExecutionException {
 		// TODO Auto-generated method stub
