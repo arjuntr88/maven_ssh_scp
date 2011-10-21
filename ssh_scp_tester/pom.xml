@@ -17,16 +17,18 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>com.sapient</groupId>
+        <groupId>com.maven.ssh</groupId>
         <artifactId>maven-ssh</artifactId>
         <version>1.0-SNAPSHOT</version>
         <configuration>
         <user>root</user>
         <host>10.209.6.22</host>
         <password>root123</password>
-        <command>netstat</command>
+        <command>ps -ef </command>
         <trust>true</trust>
         <port>22</port>
+       <output>D:\try.txt</output>
+       <append>false</append>
         <failonError>false</failonError>
         </configuration>
  		 <executions>

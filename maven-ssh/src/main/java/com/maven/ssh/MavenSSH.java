@@ -63,19 +63,19 @@ public class MavenSSH
 	/**
 	 * The keyFile.
 	 *
-	 * @parameter keyFile="string pointing to the keyfile" default-value=""
+	 * @parameter keyFile=string pointing to the keyfile default-value=""
 	 * 
 	 */
 	private String keyFile;
 	/**
-	 * The passphrase.
+	 * The passPhrase.
 	 *
-	 * @parameter passphrase="" default-value=""
+	 * @parameter passPhrase="" default-value=""
 	 * 
 	 */
 	private String passPhrase;
 	/**
-	 * The cmd to run.
+	 * The command to run.
 	 *
 	 * @parameter command="command" default-value=""
 	 * 
@@ -108,10 +108,21 @@ public class MavenSSH
 	/**
 	 * The timeout for connection.
 	 *
-	 * @parameter failonError=true/false default-value=""
+	 * @parameter failonError=true/false default-value="true"
 	 */
 	private Boolean failonError;
-	
+    /**
+     * The timeout for connection.
+     *
+     * @parameter output=string pointing to output file default-value=""
+     */
+    private String output;	
+    /**
+     * append output to the file
+     *
+     * @parameter append=true/false default-value="false"
+     */
+    private Boolean append;
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		// TODO Auto-generated method stub
 		SetSSHExecParameters ssh=new SetSSHExecParameters();
@@ -121,13 +132,35 @@ public class MavenSSH
 		if(checkKeyFile()){
 		File file=new File(keyFile);
 		if(file.exists()){
-			ssh.Sshexec(host,user,keyFile,command,port,trust,timeout,knownHosts,failonError,passPhrase,true);
-			getLog().info("meth 1");
+			//getLog().info("meth 1" + timeout);
+		    ssh.setHost( host );
+		    ssh.setCommand( command );
+		    ssh.setUser( user );
+            ssh.setPort( port );
+            ssh.setTrust( trust );
+            ssh.setTimeout( timeout );
+            ssh.setKnownHosts( knownHosts );
+            ssh.setFailonError( failonError );
+            ssh.setOutput( output );
+            ssh.setAppend( append );
+			ssh.Sshexec(keyFile,passPhrase);
+			
 		}
 		}
 		else if(checkPassword()){
-			ssh.Sshexec(host,user,password,command,port,trust,timeout,knownHosts,failonError);
-			getLog().info("meth 2");
+		    ssh.setHost( host );
+		    ssh.setCommand( command );
+		    ssh.setUser( user );
+		    ssh.setPort( port );
+		    ssh.setTrust( trust );
+		    ssh.setTimeout( timeout );
+		    ssh.setKnownHosts( knownHosts );
+		    ssh.setFailonError( failonError );
+		    ssh.setOutput( output );
+		    ssh.setAppend( append );
+			ssh.Sshexec(password);
+			
+			//getLog().info("meth 1" + timeout);
 		}
 		
 		
@@ -135,6 +168,7 @@ public class MavenSSH
 		}
 		catch (ExecutionException e){
 			//System.out.println(e.getCause().getMessage());
+		    //getLog().info( e.getMessage().toString() );
 			throw new MojoExecutionException("There was a problem executing the command");
 		}
 		catch (Exception e) {

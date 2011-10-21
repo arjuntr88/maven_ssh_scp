@@ -14,13 +14,122 @@ import com.jcraft.jsch.*;
  *
  */
 public class SetSSHExecParameters {
-	public void Sshexec(String host, String user, String password, String command, Integer port, Boolean trust, Integer timeout, String knownHosts, Boolean failonError) throws JSchException, ExecutionException{
+    /**
+     * 
+     * @param host
+     * @param user
+     * @param password
+     * @param command
+     * @param port
+     * @param trust
+     * @param timeout
+     * @param knownHosts
+     * @param failonError
+     * @param output
+     * @throws JSchException
+     * @throws ExecutionException
+     */
+    
+    String host;
+    String user;
+     String command; 
+     Integer port; 
+     Boolean trust; 
+     Integer timeout; 
+     String knownHosts;
+     Boolean failonError;
+     String output;
+     Boolean append;
+     
+    
+	public Boolean getAppend()
+    {
+        return append;
+    }
+    public void setAppend( Boolean append )
+    {
+        this.append = append;
+    }
+    public String getHost()
+    {
+        return host;
+    }
+    public void setHost( String host )
+    {
+        this.host = host;
+    }
+    public String getUser()
+    {
+        return user;
+    }
+    public void setUser( String user )
+    {
+        this.user = user;
+    }
+    public String getCommand()
+    {
+        return command;
+    }
+    public void setCommand( String command )
+    {
+        this.command = command;
+    }
+    public Integer getPort()
+    {
+        return port;
+    }
+    public void setPort( Integer port )
+    {
+        this.port = port;
+    }
+    public Boolean getTrust()
+    {
+        return trust;
+    }
+    public void setTrust( Boolean trust )
+    {
+        this.trust = trust;
+    }
+    public Integer getTimeout()
+    {
+        return timeout;
+    }
+    public void setTimeout( Integer timeout )
+    {
+        this.timeout = timeout;
+    }
+    public String getKnownHosts()
+    {
+        return knownHosts;
+    }
+    public void setKnownHosts( String knownHosts )
+    {
+        this.knownHosts = knownHosts;
+    }
+    public Boolean getFailonError()
+    {
+        return failonError;
+    }
+    public void setFailonError( Boolean failonError )
+    {
+        this.failonError = failonError;
+    }
+    public String getOutput()
+    {
+        return output;
+    }
+    public void setOutput( String output )
+    {
+        this.output = output;
+    }
+    public void Sshexec(String password) throws JSchException, ExecutionException{
 		SSHExec ssh= new SSHExec();
 		ssh.setCommand(command);
 		ssh.setHost(host);
 		ssh.setUser(user);
 		ssh.setPassword(password);
-		ssh.setCommand(command);
+		ssh.setCommand(command);		
+		ssh.setAppend( append );
 		if(trust){
 			ssh.setTrust(trust);
 		}
@@ -36,6 +145,10 @@ public class SetSSHExecParameters {
 		if(failonError){
 			ssh.setFailonError(failonError);
 		}
+		if(!output.isEmpty())
+		{
+		    ssh.setOutput( output );
+		}
 		try{
 			ssh.getChannel();
 			ssh.connectAndExecute();
@@ -45,13 +158,18 @@ public class SetSSHExecParameters {
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
+		    System.out.println(e.getMessage().toString());
 			throw new JSchException();
 		}
 		
 	}
 	
-	public void Sshexec(String host, String user, String keyFile, String command, Integer port, Boolean trust, Integer timeout, String knownHosts, Boolean failonError,String passPhrase,Boolean key) throws JSchException, ExecutionException{
+    /**
+	 * with keyfile and passphrase
+	 *
+	 */
+	public void Sshexec( String keyFile, String passPhrase) throws JSchException, ExecutionException{
 		SSHExec ssh= new SSHExec();
 		ssh.setCommand(command);
 		ssh.setHost(host);
@@ -59,7 +177,8 @@ public class SetSSHExecParameters {
 		//ssh.setPassword(password);
 		ssh.setKeyFile(keyFile);
 		ssh.setCommand(command);
-		System.out.println("method 2");
+		ssh.setAppend( append );
+		//System.out.println("method 2");
 		if(trust){
 			ssh.setTrust(trust);
 		}
@@ -78,17 +197,22 @@ public class SetSSHExecParameters {
 		if(passPhrase!=""){
 			ssh.setPassPhrase(passPhrase);
 		}
+		if(!output.isEmpty())
+		{
+		    ssh.setOutput( output );
+		}
 		try{
 			ssh.getChannel();
 			ssh.connectAndExecute();
 		}
 		catch(ExecutionException e){
+		    
 			throw new ExecutionException(e.getCause());
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
-			throw new JSchException();
+			//e.printStackTrace();
+			throw new JSchException(e.getMessage().toString());
 		}
 		
 	}

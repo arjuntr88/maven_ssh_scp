@@ -1,6 +1,9 @@
 package com.maven.ssh;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
 import com.jcraft.jsch.*;
@@ -19,7 +22,25 @@ public class SSHExec {
 	Boolean failonError;
 	String keyFile;
 	String passPhrase;
-	public String getKeyFile() {
+	String output;
+	Boolean append;
+	public Boolean getAppend()
+    {
+        return append;
+    }
+    public void setAppend( Boolean append )
+    {
+        this.append = append;
+    }
+    public String getOutput()
+    {
+        return output;
+    }
+    public void setOutput( String output )
+    {
+        this.output = output;
+    }
+    public String getKeyFile() {
 		return keyFile;
 	}
 	public void setKeyFile(String keyFile) {
@@ -107,10 +128,9 @@ public class SSHExec {
 	      {
 	    	  config.put("StrictHostKeyChecking", "no");
 	      }
-	      if(keyFile!=""){
+	      if(!keyFile.isEmpty()){
 	    	    jsch.addIdentity(keyFile, passPhrase);
-	    	  
-	    	  
+	    	    	  
 	      }
 	      
 	   
@@ -120,20 +140,23 @@ public class SSHExec {
 	      else{
 	    	  session=jsch.getSession(user, host, 22);  
 	      }
+	      if(!password.isEmpty()){
+	    	  session.setPassword(password);
+	      }
 	      if(timeout!=0){
 	    	  session.setTimeout(timeout);
 	      }
 	      try{
 	      session.setConfig(config);
 	      if(passPhrase!=""){
-	         session.setPassword(password);
+	        // session.setPassword(password);
 	         
 	      }
 	      
 	      }
 	      catch (Exception e) {
 			// TODO: handle exception
-	    	 
+	    	 e.printStackTrace();
 		}
 		}
 		catch (Exception e) {
@@ -143,10 +166,14 @@ public class SSHExec {
 		}
 	}
 	
-	public void connectAndExecute() throws JSchException, ExecutionException {
-		try {
-			session.connect();
-			Channel channel=session.openChannel("exec");
+	public void connectAndExecute() throws JSchException, ExecutionException, IOException {
+		Channel channel;
+		 FileWriter out= null;
+		 out=new FileWriter( output,append );
+		session.connect();
+        channel=session.openChannel("exec");
+	    try {
+			
 		    ((ChannelExec)channel).setCommand(command);
 		    channel.setInputStream(null);
 		    ((ChannelExec)channel).setErrStream(System.err);
@@ -158,15 +185,22 @@ public class SSHExec {
 		      byte[] tmp=new byte[1024];
 		      while(true){
 		        while(in.available()>0){
+		          
 		          int i=in.read(tmp, 0, 1024);
 		          if(i<0)break;
+		          StringReader ins= new StringReader(new String( tmp,0,i ) );
+		          char[] buffer = new char[8192];
+		            ins.read( buffer );
+		            out.write(buffer, 0, i);
+		            out.flush();
 		          System.out.print(new String(tmp, 0, i));
 		        }
 		        if(channel.isClosed()){
 		          if(channel.getExitStatus()>0){
-		        	  System.out.println("exit-status: "+channel.getExitStatus());
+		        	  //System.out.println("exit-status: "+channel.getExitStatus());
 		        	  //System.exit(channel.getExitStatus());
 		        	  if(failonError){
+		        	      
 		        		  Throwable cause=new Throwable("Remote command failed");
 						throw new ExecutionException(cause);
 		        	  }
@@ -178,23 +212,31 @@ public class SSHExec {
 		          break;
 		        }
 		        try{
-		        	Thread.sleep(1000);
+		        	Thread.sleep(100);
 		        }
 		        catch(Exception ee){}
 		      }
-		      channel.disconnect();
-		      session.disconnect();
+		     
 			
 		} 
 		catch (ExecutionException e){
+		    //System.out.println(e.getCause().toString());
 			throw new ExecutionException(null);
 		}
 		catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new JSchException();
+			//e.printStackTrace();
+		    //System.out.println(e.getCause().toString());
+			throw new JSchException(e.getMessage().toString());
+		}
+		finally{
+            if(out!=null)
+                out.close();
+		    channel.disconnect();
+            session.disconnect();
 		}
 	}
+   
 
 	
 }
