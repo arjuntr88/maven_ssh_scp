@@ -40,11 +40,19 @@ public class SetSSHExecParameters {
      Boolean failonError;
      String output;
      Boolean append;
-     
+     Boolean verbose;
     
 	public Boolean getAppend()
     {
         return append;
+    }
+    public Boolean getVerbose()
+    {
+        return verbose;
+    }
+    public void setVerbose( Boolean verbose )
+    {
+        this.verbose = verbose;
     }
     public void setAppend( Boolean append )
     {
@@ -124,12 +132,13 @@ public class SetSSHExecParameters {
     }
     public void Sshexec(String password) throws JSchException, ExecutionException{
 		SSHExec ssh= new SSHExec();
-		ssh.setCommand(command);
+        ssh.setCommand( command);
 		ssh.setHost(host);
 		ssh.setUser(user);
 		ssh.setPassword(password);
 		ssh.setCommand(command);		
 		ssh.setAppend( append );
+		ssh.setVerbose( verbose );
 		if(trust){
 			ssh.setTrust(trust);
 		}
@@ -142,12 +151,13 @@ public class SetSSHExecParameters {
 		if(knownHosts!=""){
 			ssh.setKnownHosts(knownHosts);
 		}
-		if(failonError){
-			ssh.setFailonError(failonError);
-		}
-		if(!output.isEmpty())
+		
+		ssh.setFailonError(failonError);
+		
+		if(output!="")
 		{
 		    ssh.setOutput( output );
+		    //System.out.println(ssh.getOutput());
 		}
 		try{
 			ssh.getChannel();
@@ -158,9 +168,9 @@ public class SetSSHExecParameters {
 		}
 		catch(Exception e)
 		{
-			//e.printStackTrace();
-		    System.out.println(e.getMessage().toString());
-			throw new JSchException();
+			e.printStackTrace();
+		    //System.out.println(e.getMessage().toString());
+			throw new JSchException(e.getMessage());
 		}
 		
 	}
@@ -178,6 +188,7 @@ public class SetSSHExecParameters {
 		ssh.setKeyFile(keyFile);
 		ssh.setCommand(command);
 		ssh.setAppend( append );
+		ssh.setVerbose( verbose );
 		//System.out.println("method 2");
 		if(trust){
 			ssh.setTrust(trust);
@@ -212,7 +223,7 @@ public class SetSSHExecParameters {
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			throw new JSchException(e.getMessage().toString());
+			throw new JSchException(e.getMessage());
 		}
 		
 	}
