@@ -20,9 +20,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+//import java.io.FileWriter;
+//import java.io.IOException;
+//import java.util.concurrent.ExecutionException;
 
 /**
  * Goal which touches a timestamp file.
@@ -34,21 +34,25 @@ import java.util.concurrent.ExecutionException;
 public class MavenSCP
     extends AbstractMojo
 {
-    /**
-     * The host to run cmd in.
-     * 
-     * @parameter host="host" default-value=""
-     * @required
-     */
-    private String host;
 
     /**
-     * The user to run cmd as.
+     * The file to copy.
      * 
-     * @parameter user="user" default-value=""
+     * @parameter file="file" default-value=""
      * @required
      */
-    private String user;
+    private String file;
+    
+    /**
+     * The target dir.
+     * 
+     * @parameter todir="todir" default-value=""
+     * @required
+     */
+    private String todir;
+    
+    
+
 
     /**
      * The password.
@@ -76,13 +80,7 @@ public class MavenSCP
      * 
      * @parameter command="command" default-value=""
      */
-    private String command;
 
-    /**
-     * Trust the remote.
-     * 
-     * @parameter trust="true/false" default-value="false"
-     */
     private Boolean trust;
 
     /**
@@ -138,19 +136,21 @@ public class MavenSCP
         throws MojoExecutionException
     {
        SCP scp=new SCP();
-       System.out.println("Maven SCP Plugin");
+       //System.out.println("Maven SCP Plugin");
        verifyPassword();
+       checkFileTodir();
        try
        {
-           if ( checkKeyFile() )
+           if ( checkString(keyFile) )
            {
-               File file = new File( keyFile );
-               if ( file.exists() )
+               File checkKeyFile = new File( keyFile );
+               if ( checkKeyFile.exists() )
                {
                    // getLog().info("meth 1" + timeout);
-                   scp.setHost( host );
+                   
                    scp.setVerbose( verbose );
-                   scp.setUser( user );
+                   scp.setSourcefile( file );
+                   scp.setTodir( todir );
                    scp.setPort( port );
                    scp.setTrust( trust );
                    scp.setTimeout( timeout );
@@ -158,16 +158,17 @@ public class MavenSCP
                    scp.setFailonError( failonError );
                    scp.setOutput( output );
                    scp.setAppend( append );
-
+                   scp.setPassPhrase( passPhrase );
                    //scp.Sshexec( keyFile, passPhrase );
-
+                   scp.copyFiles(keyFile, passPhrase);
                }
            }
-           else if ( checkPassword() )
+           else if ( checkString(password) )
            {
-               scp.setHost( host );
+              
                scp.setVerbose( verbose );
-               scp.setUser( user );
+               scp.setSourcefile( this.file );
+               scp.setTodir( todir );               
                scp.setPort( port );
                scp.setTrust( trust );
                scp.setTimeout( timeout );
@@ -175,7 +176,7 @@ public class MavenSCP
                scp.setFailonError( failonError );
                scp.setOutput( output );
                scp.setAppend( append );
-
+               scp.copyFiles(password);
                //scp.Sshexec( password );
 
                // getLog().info("meth 1" + timeout);
@@ -197,36 +198,47 @@ public class MavenSCP
        }
 
     }
+
+    private void checkFileTodir()
+        throws MojoExecutionException
+    {
+        if(!checkString(this.file) | !checkString(todir))
+           {
+               //System.out.println(this.file + todir);
+               throw new MojoExecutionException( "Please provide a file or a directory" ); 
+           }
+    }
     
     private void verifyPassword()
     throws MojoExecutionException
-{
+    {
     // TODO Auto-generated method stub
 
-    if ( !checkPassword() )
+    if ( !checkString(password) )
     {
-        if ( !checkKeyFile() )
+        if ( !checkString(keyFile) )
         {
             throw new MojoExecutionException( "Please provide a password or a keyfile" );
         }
     }
-    if ( checkPassword() )
+    if ( checkString(password) )
     {
-        if ( checkKeyFile() )
+        if ( checkString(keyFile) )
         {
             throw new MojoExecutionException( "Please provide either a password or keyfile not both" );
         }
     }
 
-}
+    }
 
-private boolean checkKeyFile()
-{
+    private boolean checkString(String str)
+    {
     // TODO Auto-generated method stub
+   // System.out.println(str);
     try
     {
 
-        if ( keyFile.isEmpty() )
+        if ( str.isEmpty() )
         {
             return false;
         }
@@ -236,24 +248,6 @@ private boolean checkKeyFile()
         return false;
     }
     return true;
-}
-
-private Boolean checkPassword()
-    throws MojoExecutionException
-{
-    // TODO Auto-generated method stub
-    try
-    {
-        if ( password.isEmpty() )
-        {
-            return false;
-        }
     }
-    catch ( Exception e )
-    {
-        return false;
-    }
-    return true;
 
-}
 }

@@ -1,13 +1,16 @@
 package com.maven.scp;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 public class SCP
 {
-    String host;
-
-    String user;
+    String sourcefile;
+    
+    String todir;
 
     String password;
 
@@ -35,25 +38,34 @@ public class SCP
 
     Boolean verbose;
 
-    public String getHost()
+    Boolean isToRemote, isFromRemote, isRecursive;
+
+    public String getSourcefile()
     {
-        return host;
+        return sourcefile;
     }
 
-    public void setHost( String host )
+    public void setSourcefile( String sourcefile )
     {
-        this.host = host;
+        
+        this.sourcefile = sourcefile;
+        this.isFromRemote = isRemote(this.sourcefile);
+        this.isRecursive = this.sourcefile.endsWith( "*" );
     }
 
-    public String getUser()
+
+
+    public String getTodir()
     {
-        return user;
+        return todir;
     }
 
-    public void setUser( String user )
+    public void setTodir( String todir )
     {
-        this.user = user;
+        this.todir = todir;
+        this.isToRemote = isRemote(this.todir);
     }
+
 
     public String getPassword()
     {
@@ -185,6 +197,52 @@ public class SCP
         this.verbose = verbose;
     }
 
+    public void copyFiles( String keyFile, String passPhrase )
+    {
+        // TODO Auto-generated method stub
+        
+        
+        
+    }
+
+    public void copyFiles( String password )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    private Boolean isRemote( String URI )
+    {
+        // TODO Auto-generated method stub
+        int index = URI.indexOf( '@' );
+        if(index < 0)return false;
+        return true;
+    }
     
+    static int checkAck(InputStream in) throws IOException{
+        int b=in.read();
+        // b may be 0 for success,
+        //          1 for error,
+        //          2 for fatal error,
+        //          -1
+        if(b==0) return b;
+        if(b==-1) return b;
+
+        if(b==1 || b==2){
+          StringBuffer sb=new StringBuffer();
+          int c;
+          do {
+        c=in.read();
+        sb.append((char)c);
+          }
+          while(c!='\n');
+          if(b==1){ // error
+        System.out.print(sb.toString());
+          }
+          if(b==2){ // fatal error
+        System.out.print(sb.toString());
+          }
+        }
+        return b;
+      }
     
 }
