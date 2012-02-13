@@ -238,12 +238,7 @@ public class SSHExec
             try
             {
                 session.setConfig( config );
-                if ( passPhrase != "" )
-                {
-                    // session.setPassword(password);
-
-                }
-
+               
             }
             catch ( Exception e )
             {

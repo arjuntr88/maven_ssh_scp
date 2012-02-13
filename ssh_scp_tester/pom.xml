@@ -23,12 +23,10 @@
         <artifactId>maven-scp</artifactId>
         <version>1.0-SNAPSHOT</version>
         <configuration>
-        <user>root</user>
-        <host>10.209.6.22</host>
-        <file>qwerty</file>
-        <todir>root@10.209.6.22:/opt</todir>
+        <file>/media/data/a.pl</file>
+        <todir>tr@localhost:/home/tr/</todir>
 <!--         <password>root123</password> -->
-        <keyFile>abcd</keyFile>
+     	<password>dh57dd</password>
         <trust>true</trust>
         <port>22</port>
         
@@ -86,15 +84,15 @@
         <artifactId>maven-ssh</artifactId>
         <version>1.0-SNAPSHOT</version>
         <configuration>
-        <user>root</user>
-        <host>10.209.6.22</host>
-        <password>root123</password>
+        <user>tr</user>
+        <host>localhost</host>
+        <password>dh57dd</password>
         <command>ls -al</command>
         <trust>true</trust>
         <port>22</port>
-        <output>d:\try.txt</output>
+        <output>try.txt</output>
         <append>true</append>
-        <verbose>true</verbose>
+        <verbose>false</verbose>
         </configuration>
  		 <executions>
           <execution>

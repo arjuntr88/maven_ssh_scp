@@ -146,7 +146,7 @@ public class MavenSCP
                File checkKeyFile = new File( keyFile );
                if ( checkKeyFile.exists() )
                {
-                   // getLog().info("meth 1" + timeout);
+                  // getLog().info("meth keyfile" + timeout);
                    
                    scp.setVerbose( verbose );
                    scp.setSourcefile( file );
@@ -167,7 +167,7 @@ public class MavenSCP
            {
               
                scp.setVerbose( verbose );
-               scp.setSourcefile( this.file );
+               scp.setSourcefile( file );
                scp.setTodir( todir );               
                scp.setPort( port );
                scp.setTrust( trust );
@@ -176,10 +176,12 @@ public class MavenSCP
                scp.setFailonError( failonError );
                scp.setOutput( output );
                scp.setAppend( append );
+               scp.setPassword(password);
                scp.copyFiles(password);
+               
                //scp.Sshexec( password );
-
-               // getLog().info("meth 1" + timeout);
+               
+                //getLog().info("meth password" + file);
            }
 
        }
